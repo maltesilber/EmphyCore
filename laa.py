@@ -60,7 +60,7 @@ def load_patient(path):
                 break
             else:
                 mask_path = None
-        print(f'{prefix} for {path} not available')
+                print(f'{prefix} - {mask_type} for {path} not available')
     if mask_path is None:
         print(os.listdir(path))
         FileNotFoundError(f'no mask found for {path}')
