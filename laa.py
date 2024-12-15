@@ -52,18 +52,20 @@ def load_patient(path):
     if not os.path.exists(ct_path):
         raise FileNotFoundError(f"CT file not found at {ct_path}")
 
-    mask_path = None
+    found = False
     for prefix in mask_prefix:
         for mask_type in mask_types:
             mask_path = os.path.join(path, f'{prefix} - {mask_type}.nrrd')
             if os.path.exists(mask_path):
                 print(f'{prefix} - {mask_type} found !!')
+                found = True  # Flag to indicate if a mask was found
                 break
             else:
-                mask_path = None
                 print(f'{prefix} - {mask_type} for {path} not available')
+        if found:
+            break
 
-    if mask_path is None:
+    if not found:
         for p in os.listdir(path):
             if 'Lung' in p:
                 print(p)
