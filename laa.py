@@ -45,7 +45,7 @@ def categorize_laa(laa_value):
 
 def load_patient(path):
     mask_types = ['GTV', 'CTV', 'PTV']
-    mask_prefix = ['Lung R+L', 'Lunger H+V']
+    mask_prefix = ['Lung R+L', 'Lung R + L', 'Lunger H+V']
     ct_path = os.path.join(path, 'planning_ct.nii.gz')
 
     # sanity checks
