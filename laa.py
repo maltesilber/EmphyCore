@@ -68,10 +68,10 @@ def load_patient(path):
             break
 
     if not found:
-        for p in os.listdir(path):
-            if 'Lung' in p:
-                print(p)
-        print(f'no mask found for {path}')
+        # for p in os.listdir(path):
+        #    if 'Lung' in p:
+        #        print(p)
+        # print(f'no mask found for {path}')
         return ct_data, None
     else:
         mask_data, _ = nrrd.read(mask_path)
