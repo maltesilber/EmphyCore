@@ -6,14 +6,17 @@ from collections import Counter
 import matplotlib.pyplot as plt
 
 
-def plot_laa_distribution(laa_percentages):
+def plot_laa_distribution(laa_percentages, save_path = None):
     plt.figure(figsize=(8, 6))
     plt.hist(laa_percentages, bins=10, edgecolor='black', alpha=0.75)
     plt.xlabel('LAA Percentage (%)', fontsize=12)
     plt.ylabel('Number of Patients', fontsize=12)
     plt.title('Distribution of LAA Percentages', fontsize=14)
     plt.grid(axis='y', linestyle='--', alpha=0.7)
-    return plt
+    if save_path:
+        print(f'Save histogram to {save_path}')
+        plt.savefig(save_path)
+
 
 def compute_laa(img, lung_mask, t=-950):
     """
@@ -79,7 +82,6 @@ def load_patient(path):
         # Ensure the shapes match
         if ct_data.shape != mask_data.shape:
             raise ValueError(f"CT scan and lung mask dimensions do not match: {ct_data.shape} vs {mask_data.shape}")
-        print(f'{path} loaded ! wooo' )
         return ct_data, mask_data
 
 
@@ -124,9 +126,7 @@ def main(root_dir):
         print(f"{category.capitalize()}: {count} patients ({percentage:.2f}%)")
 
     print(f"\nTotal Patients Processed: {total_patients}")
-
-    plot = plot_laa_distribution(laas)
-    plot.savefig(f'{root_dir}/maltes_project/laa_histogram.png')
+    plot_laa_distribution(laas, f'{root_dir}/maltes_project/laa_histogram.png')
 
 
 if __name__ == '__main__':
