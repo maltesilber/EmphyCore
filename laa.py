@@ -58,6 +58,8 @@ def load_patient(path):
             mask_path = os.path.join(path, f'{prefix} - {mask_type}.nrrd')
             if os.path.exists(mask_path):
                 break
+            else:
+                mask_path = None
         print(f'{prefix} for {path} not available')
     if mask_path is None:
         print(os.listdir(path))
