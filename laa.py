@@ -87,6 +87,14 @@ def main(root_dir):
     laas = []
     # Traverse the directory tree
     for patient_id in os.listdir(root_dir):
+        if patient_id.startswith('.'):
+            continue
+        try:
+            int(patient_id)
+        except ValueError:
+            print(f"Skipping invalid patient ID: {patient_id}")
+            continue
+
         patient_path = os.path.join(root_dir, 'nsclc_cbct_dataset', patient_id, '0')
         image, mask = load_patient(patient_path)
         laa_perc = compute_laa(image, mask)
