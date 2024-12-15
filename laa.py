@@ -113,7 +113,7 @@ def main(root_dir):
             c = categorize_laa(laa_perc)
             laa_counter[c] += 1
             if laa_perc > 5:
-                print(f'{patient_id} has {c} emphysema!')
+                print(f'patient {patient_id} has {c} emphysema!')
 
     # After processing all patients and updating laa_counter
     print("Summary of Emphysema Categories:")
