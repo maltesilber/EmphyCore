@@ -69,6 +69,7 @@ def load_patient(path):
     # Ensure the shapes match
     if ct_data.shape != mask_data.shape:
         raise ValueError(f"CT scan and lung mask dimensions do not match: {ct_data.shape} vs {mask_data.shape}")
+    print(f'{path} loaded ! wooo' )
     return ct_data, mask_data
 
 
