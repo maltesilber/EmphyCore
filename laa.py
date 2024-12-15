@@ -99,6 +99,7 @@ def main(root_dir):
         patient_path = os.path.join(root_dir, 'nsclc_cbct_dataset', patient_id, '0')
         image, mask = load_patient(patient_path)
         laa_perc = compute_laa(image, mask)
+        print(f'laa perc: {laa_perc}')
         laas.append(laa_perc)
         c = categorize_laa(laa_perc)
         laa_counter[c] += 1
