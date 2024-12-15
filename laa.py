@@ -64,8 +64,6 @@ def load_patient(path):
             if os.path.exists(mask_path):
                 found = True  # Flag to indicate if a mask was found
                 break
-            else:
-                print(f'{prefix} - {mask_type} for {path} not available')
         if found:
             break
 
