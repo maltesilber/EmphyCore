@@ -51,13 +51,14 @@ def load_patient(path):
     # sanity checks
     if not os.path.exists(ct_path):
         raise FileNotFoundError(f"CT file not found at {ct_path}")
+    ct_scan = nib.load(ct_path)
+    ct_data = ct_scan.get_fdata()
 
     found = False
     for prefix in mask_prefix:
         for mask_type in mask_types:
             mask_path = os.path.join(path, f'{prefix} - {mask_type}.nrrd')
             if os.path.exists(mask_path):
-                print(f'{prefix} - {mask_type} found !!')
                 found = True  # Flag to indicate if a mask was found
                 break
             else:
@@ -69,17 +70,17 @@ def load_patient(path):
         for p in os.listdir(path):
             if 'Lung' in p:
                 print(p)
-        FileNotFoundError(f'no mask found for {path}')
+        print(f'no mask found for {path}')
+        return ct_data, None
+    else:
+        print(f'{prefix} - {mask_type} found !!')
+        mask_data, _ = nrrd.read(mask_path)
 
-    ct_scan = nib.load(ct_path)
-    ct_data = ct_scan.get_fdata()
-    mask_data, _ = nrrd.read(mask_path)
-
-    # Ensure the shapes match
-    if ct_data.shape != mask_data.shape:
-        raise ValueError(f"CT scan and lung mask dimensions do not match: {ct_data.shape} vs {mask_data.shape}")
-    print(f'{path} loaded ! wooo' )
-    return ct_data, mask_data
+        # Ensure the shapes match
+        if ct_data.shape != mask_data.shape:
+            raise ValueError(f"CT scan and lung mask dimensions do not match: {ct_data.shape} vs {mask_data.shape}")
+        print(f'{path} loaded ! wooo' )
+        return ct_data, mask_data
 
 
 def main(root_dir):
@@ -107,11 +108,12 @@ def main(root_dir):
 
         patient_path = os.path.join(root_dir, 'nsclc_cbct_dataset', patient_id, '0')
         image, mask = load_patient(patient_path)
-        laa_perc = compute_laa(image, mask)
-        print(f'laa perc: {laa_perc}')
-        laas.append(laa_perc)
-        c = categorize_laa(laa_perc)
-        laa_counter[c] += 1
+        if mask is not None:
+            laa_perc = compute_laa(image, mask)
+            print(f'laa perc: {laa_perc}')
+            laas.append(laa_perc)
+            c = categorize_laa(laa_perc)
+            laa_counter[c] += 1
 
     # After processing all patients and updating laa_counter
     print("Summary of Emphysema Categories:")
