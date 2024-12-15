@@ -62,7 +62,9 @@ def load_patient(path):
                 mask_path = None
                 print(f'{prefix} - {mask_type} for {path} not available')
     if mask_path is None:
-        [print(p) for p in os.listdir(path)]
+        for p in os.listdir(path):
+            if 'Lung' in p:
+                print(p)
         FileNotFoundError(f'no mask found for {path}')
 
     ct_scan = nib.load(ct_path)
