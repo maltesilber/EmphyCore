@@ -86,7 +86,7 @@ def main(root_dir):
 
     laas = []
     # Traverse the directory tree
-    for patient_id in os.listdir(root_dir):
+    for patient_id in os.listdir(os.path.join(root_dir, 'nsclc_cbct_dataset')):
         if patient_id.startswith('.'):
             continue
         try:
