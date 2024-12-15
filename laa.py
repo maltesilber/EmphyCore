@@ -74,7 +74,6 @@ def load_patient(path):
         print(f'no mask found for {path}')
         return ct_data, None
     else:
-        print(f'{prefix} - {mask_type} found !!')
         mask_data, _ = nrrd.read(mask_path)
 
         # Ensure the shapes match
@@ -110,10 +109,11 @@ def main(root_dir):
         image, mask = load_patient(patient_path)
         if mask is not None:
             laa_perc = compute_laa(image, mask)
-            print(f'laa perc: {laa_perc}')
             laas.append(laa_perc)
             c = categorize_laa(laa_perc)
             laa_counter[c] += 1
+            if laa_perc > 5:
+                print(f'{patient_id} has {c} emphysema!')
 
     # After processing all patients and updating laa_counter
     print("Summary of Emphysema Categories:")
