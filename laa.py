@@ -2,7 +2,18 @@ import nibabel as nib
 import nrrd
 import numpy as np
 import os
+from collections import Counter
+import matplotlib.pyplot as plt
 
+
+def plot_laa_distribution(laa_percentages):
+    plt.figure(figsize=(8, 6))
+    plt.hist(laa_percentages, bins=10, edgecolor='black', alpha=0.75)
+    plt.xlabel('LAA Percentage (%)', fontsize=12)
+    plt.ylabel('Number of Patients', fontsize=12)
+    plt.title('Distribution of LAA Percentages', fontsize=14)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    return plt
 
 def compute_laa(img, lung_mask, t=-950):
     """
@@ -21,6 +32,15 @@ def compute_laa(img, lung_mask, t=-950):
     total_laa = np.sum(img[lung_mask > 0] < t)
     total_lung = np.sum(lung_mask > 0)
     return (total_laa / total_lung) * 100
+
+
+def categorize_laa(laa_value):
+    thresholds = [5, 10, 20]
+    categories = ['normal', 'mild', 'moderate', 'severe']
+    for i, threshold in enumerate(thresholds):
+        if laa_value < threshold:
+            return categories[i]
+    return categories[-1]
 
 
 def load_patient(path):
@@ -62,16 +82,32 @@ def main(root_dir):
     Returns:
         dict: A dictionary where keys are (patient_id, scan_time) tuples and values are nibabel NIfTI1Image objects.
     """
-    ct_scans = {}
+    laa_counter = Counter({'normal': 0, 'mild': 0, 'moderate': 0, 'severe': 0})
 
+    laas = []
     # Traverse the directory tree
     for patient_id in os.listdir(root_dir):
-        patient_path = os.path.join(root_dir, patient_id, '0')
+        patient_path = os.path.join(root_dir, 'nsclc_cbct_dataset', patient_id, '0')
         image, mask = load_patient(patient_path)
-        # Check for the planning CT file
-        ct_file_path = os.path.join(scan_path, "planning_ct.nii.gz")
-        if os.path.exists(ct_file_path):
-            try:
-                # Load the NIfTI file
-                ct_image = nib.load(ct_file_path)
-                # Store in the dictionary with (patient_id,
+        laa_perc = compute_laa(image, mask)
+        laas.append(laa_perc)
+        c = categorize_laa(laa_perc)
+        laa_counter[c] += 1
+
+    # After processing all patients and updating laa_counter
+    print("Summary of Emphysema Categories:")
+    total_patients = sum(laa_counter.values())
+
+    for category, count in laa_counter.items():
+        percentage = (count / total_patients) * 100 if total_patients > 0 else 0
+        print(f"{category.capitalize()}: {count} patients ({percentage:.2f}%)")
+
+    print(f"\nTotal Patients Processed: {total_patients}")
+
+    plot = plot_laa_distribution(laas)
+    plot.savefig(f'{root_dir}/maltes_project/laa_histogram.png')
+
+
+if __name__ == '__main__':
+    root = '/media/5tb_encrypted/'
+    main(root)
