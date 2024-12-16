@@ -103,11 +103,10 @@ def main(root_dir):
         image, (mask, mask_header) = load_patient(patient_path)
         if mask is not None:
             laa_perc, laa = compute_laa(image, mask)
-            nrrd.write(os.path.join(root_dir, f'maltes_project/emphysema/laa_p{patient_id}.nrrd'), laa, mask_header)
-
             laas.append(laa_perc)
             c = categorize_laa(laa_perc)
             laa_counter[c] += 1
+            nrrd.write(os.path.join(root_dir, f'maltes_project/emphysema/laa_p{patient_id}_{c}.nrrd'), laa, mask_header)
             if laa_perc > 5:
                 print(f'patient {patient_id} has {c} emphysema!')
 
