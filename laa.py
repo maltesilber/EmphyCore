@@ -106,9 +106,9 @@ def main(root_dir):
             laas.append(laa_perc)
             c = categorize_laa(laa_perc)
             laa_counter[c] += 1
-            nrrd.write(os.path.join(root_dir, f'maltes_project/emphysema/laa_{c}_p{patient_id}.nrrd'), laa, mask_header)
             if laa_perc > 5:
                 print(f'patient {patient_id} has {c} emphysema!')
+                nrrd.write(os.path.join(root_dir, f'maltes_project/emphysema/laa_{c}_p{patient_id}.nrrd'), laa, mask_header)
 
     # After processing all patients and updating laa_counter
     print("Summary of Emphysema Categories:")
