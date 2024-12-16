@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 def plot_laa_distribution(laa_percentages, save_path = None):
     plt.figure(figsize=(8, 6))
-    plt.hist(laa_percentages, bins=10, edgecolor='black', alpha=0.75)
+    plt.hist(laa_percentages, bins=20, edgecolor='black', alpha=0.75)
     plt.xlabel('LAA Percentage (%)', fontsize=12)
     plt.ylabel('Number of Patients', fontsize=12)
     plt.title('Distribution of LAA Percentages', fontsize=14)
