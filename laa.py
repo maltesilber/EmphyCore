@@ -109,17 +109,6 @@ def main(root_dir):
             laa_counter[c] += 1
             if laa_perc > 5:
                 print(f'patient {patient_id} has {c} emphysema!')
-                print('### header ###')
-                print(mask_header)
-                print('### laa range ###')
-                print(f'({laa.min()}, {laa.max()})')
-                print('### mask range range ###')
-                print(f'({mask.min()}, {mask.max()})')
-
-                print('### laa shape ###')
-                print(f'{laa.shape}')
-                print('### mask range range ###')
-                print(f'{mask.shape}')
                 nrrd.write(
                     os.path.join(root_dir, f'maltes_project/emphysema/laa_{c}_p{patient_id}.nrrd'), laa, mask_header
                 )
