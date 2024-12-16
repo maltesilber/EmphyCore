@@ -32,9 +32,8 @@ def compute_laa(img, lung_mask, t=-950):
     # Ensure that both arrays have the same shape
     if img.shape != lung_mask.shape:
         raise ValueError("CT scan and lung mask must have the same dimensions.")
-    total_laa = np.sum(img[lung_mask > 0] < t)
-    total_lung = np.sum(lung_mask > 0)
-    return (total_laa / total_lung) * 100
+    laa = img[lung_mask > 0] < t
+    return np.sum(laa) / np.sum(lung_mask > 0)*100, laa
 
 
 def categorize_laa(laa_value):
@@ -68,18 +67,13 @@ def load_patient(path):
             break
 
     if not found:
-        # for p in os.listdir(path):
-        #    if 'Lung' in p:
-        #        print(p)
-        # print(f'no mask found for {path}')
-        return ct_data, None
+        return ct_data, (None, None)
     else:
-        mask_data, _ = nrrd.read(mask_path)
+        mask_data, header = nrrd.read(mask_path)
 
-        # Ensure the shapes match
         if ct_data.shape != mask_data.shape:
             raise ValueError(f"CT scan and lung mask dimensions do not match: {ct_data.shape} vs {mask_data.shape}")
-        return ct_data, mask_data
+        return ct_data, (mask_data, header)
 
 
 def main(root_dir):
@@ -106,9 +100,11 @@ def main(root_dir):
             continue
 
         patient_path = os.path.join(root_dir, 'nsclc_cbct_dataset', patient_id, '0')
-        image, mask = load_patient(patient_path)
+        image, (mask, mask_header) = load_patient(patient_path)
         if mask is not None:
-            laa_perc = compute_laa(image, mask)
+            laa_perc, laa = compute_laa(image, mask)
+            nrrd.write(os.path.join(root_dir, f'maltes_project/emphysema/laa_p{patient_id}.nrrd'), laa, mask_header)
+
             laas.append(laa_perc)
             c = categorize_laa(laa_perc)
             laa_counter[c] += 1
@@ -124,7 +120,7 @@ def main(root_dir):
         print(f"{category.capitalize()}: {count} patients ({percentage:.2f}%)")
 
     print(f"\nTotal Patients Processed: {total_patients}")
-    plot_laa_distribution(laas, f'{root_dir}/maltes_project/laa_histogram.png')
+    plot_laa_distribution(laas, os.path.join(root_dir, 'maltes_project/emphysema/laa_histogram.png'))
 
 
 if __name__ == '__main__':
