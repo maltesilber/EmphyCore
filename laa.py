@@ -33,7 +33,8 @@ def compute_laa(img, lung_mask, t=-950):
     if img.shape != lung_mask.shape:
         raise ValueError("CT scan and lung mask must have the same dimensions.")
     laa = img[lung_mask > 0] < t
-    return np.sum(laa) / np.sum(lung_mask > 0)*100, laa.astype(np.uint8)
+    laa_mask = (img*lung_mask < t)*1
+    return np.sum(laa) / np.sum(lung_mask > 0)*100, laa_mask.astype(np.uint8)
 
 
 def categorize_laa(laa_value):
