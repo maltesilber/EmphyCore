@@ -130,11 +130,15 @@ def main(root_dir):
             if laa_perc > 5:
                 print(f'patient {patient_id} has {c} emphysema!')
                 nrrd.write(
-                    os.path.join(root_dir, f'maltes_project/emphysema/laa_{c}_p{patient_id}.nrrd'), laa, mask_header
+                    os.path.join(root_dir, f'maltes_project/emphysema/laa_{c}_p{patient_id}.nrrd'),
+                    laa,
+                    mask_header
                 )
 
                 nrrd.write(
-                    os.path.join(root_dir, f'maltes_project/emphysema/laa_outline_{c}_p{patient_id}.nrrd'), laa, mask_header
+                    os.path.join(root_dir, f'maltes_project/emphysema/laa_outline_{c}_p{patient_id}.nrrd'),
+                    laa_outline,
+                    mask_header
                 )
 
     # After processing all patients and updating laa_counter
