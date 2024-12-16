@@ -4,6 +4,25 @@ import numpy as np
 import os
 from collections import Counter
 import matplotlib.pyplot as plt
+import cv2
+
+
+def extract_mask_outline(mask):
+    """
+    Extracts the outline of a 3D mask.
+
+    Parameters:
+    - mask (np.ndarray): The 3D binary mask array of shape (256, 256, 256).
+
+    Returns:
+    - outline_3d (np.ndarray): A 3D array of the same shape as `mask` containing the outlines.
+    """
+    overlay = np.zeros_like(mask, dtype=np.uint8)
+    for i in range(mask.shape[2]):
+        mask_slice = mask[:, :, i] * 255
+        outline = cv2.Canny(mask_slice, 100, 200)
+        overlay[:, :, i] = outline
+    return (overlay/255).astype(np.uint8)
 
 
 def plot_laa_distribution(laa_percentages, save_path = None):
@@ -104,6 +123,7 @@ def main(root_dir):
         image, (mask, mask_header) = load_patient(patient_path)
         if mask is not None:
             laa_perc, laa = compute_laa(image, mask)
+            laa_outline = extract_mask_outline(mask)
             laas.append(laa_perc)
             c = categorize_laa(laa_perc)
             laa_counter[c] += 1
@@ -111,6 +131,10 @@ def main(root_dir):
                 print(f'patient {patient_id} has {c} emphysema!')
                 nrrd.write(
                     os.path.join(root_dir, f'maltes_project/emphysema/laa_{c}_p{patient_id}.nrrd'), laa, mask_header
+                )
+
+                nrrd.write(
+                    os.path.join(root_dir, f'maltes_project/emphysema/laa_outline_{c}_p{patient_id}.nrrd'), laa, mask_header
                 )
 
     # After processing all patients and updating laa_counter
