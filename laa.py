@@ -127,7 +127,7 @@ def main(root_dir):
         image, (mask, mask_header) = load_patient(patient_path)
         if mask is not None:
             laa_perc, laa = compute_laa(image, mask)
-            laa_outline = extract_mask_outline(mask)
+            # laa_outline = extract_mask_outline(mask)
             laas.append(laa_perc)
             c = categorize_laa(laa_perc)
             laa_counter[c] += 1
@@ -139,11 +139,11 @@ def main(root_dir):
                     mask_header
                 )
 
-                nrrd.write(
-                    os.path.join(root_dir, f'maltes_project/emphysema/laa_outline_{c}_p{patient_id}.nrrd'),
-                    laa_outline,
-                    mask_header
-                )
+                # nrrd.write(
+                #     os.path.join(root_dir, f'maltes_project/emphysema/laa_outline_{c}_p{patient_id}.nrrd'),
+                #     laa_outline,
+                #     mask_header
+                # )
 
     # After processing all patients and updating laa_counter
     print("Summary of Emphysema Categories:")
