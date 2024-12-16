@@ -74,6 +74,10 @@ def load_patient(path):
     if not os.path.exists(ct_path):
         raise FileNotFoundError(f"CT file not found at {ct_path}")
     ct_scan = nib.load(ct_path)
+    affine = ct_scan.affine
+    voxel_sizes = nib.affines.voxel_sizes(affine)
+    slice_thickness = voxel_sizes[2]  # Slice thickness is along the z-axis
+    print("Voxel sizes (x, y, z):", voxel_sizes)
     ct_data = ct_scan.get_fdata()
 
     found = False
